@@ -327,6 +327,13 @@ $('play').onclick=()=>{
 function roomDialog(message='') {
   if(playing!=='lobby')return;
   openDialog('邀请好友');
+  if(PAGES_BUILD) {
+    const download=node('a','下载好友联机包');
+    download.href='https://github.com/youlinh/exfil-frontline/releases/latest';
+    const link=node('p');link.append(download);
+    content.append(node('p','这个网页可直接单人游玩。好友组队时，由房主下载联机包并启动房间服务，再从局域网地址创建房间。'),link);
+    return;
+  }
   if(!lanReady && !room) {
     content.append(node('p','双击打开的是单机版。把联机包解压后运行 room-server.cjs，再用它显示的网址打开游戏，即可创建房间。'),
       node('p','好友需要能访问房主的网址。同一 Wi‑Fi 下可直接使用终端显示的局域网地址。'));
@@ -765,7 +772,7 @@ function frame(now) {
 lobbyRender();
 requestAnimationFrame(frame);
 setTimeout(()=>{if(playing==='lobby'&&!world&&buildWorld($('menuWorld'),true))world.load(mapIndex);},230);
-if(location.protocol==='http:'||location.protocol==='https:') {
+if(!PAGES_BUILD&&(location.protocol==='http:'||location.protocol==='https:')) {
   const query=new URLSearchParams(location.search);
   const code=query.get('room')?.toUpperCase();
   requestId=code&&/^[A-Z0-9]{6}$/.test(code)?code:null;

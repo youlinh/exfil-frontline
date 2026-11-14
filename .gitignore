@@ -2,4 +2,5 @@
 /room-server.cjs
 /source/node_modules/
 /source/release/
+/source/pages/
 /source/.env*

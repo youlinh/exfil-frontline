@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
+    "build:pages": "node build.mjs --pages",
     "start": "node release/room-server.cjs",
     "test": "node --test"
   },
