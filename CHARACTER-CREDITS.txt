@@ -1,0 +1,24 @@
+撤离前线 | 人物模型与动画素材
+
+人物模型
+“Military tactical suit (LowPolyGameReady)” by DanlyVostok (1799danly)
+https://sketchfab.com/3d-models/military-tactical-suit-lowpolygameready-ef698ce36b1545a78ce592dd3db4c7ed
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+Adaptations include texture re-encoding and mesh preparation from 3d-fps,
+removal of the headset, role-specific colors and materials, and a retargeted rig.
+
+动画与骨骼
+Quaternius, Universal Animation Library (1 & 2), CC0 1.0
+https://quaternius.com/packs/universalanimationlibrary.html
+https://quaternius.com/packs/universalanimationlibrary2.html
+https://creativecommons.org/publicdomain/zero/1.0/
+“FREE [Military Soldier] RIGGED” by BAMEN, CC BY 4.0
+https://sketchfab.com/3d-models/free-military-soldier-rigged-e9c56308a67d4a3db62e914fafa4d198
+Motions were adapted from the Quaternius libraries as retargeted onto the
+BAMEN rig by cktang88/3d-fps, trimmed and retargeted to the tactical model.
+The BAMEN model mesh and 100STYLE motion clips are not used in this pack.
+
+原始素材包及归属记录
+https://github.com/cktang88/3d-fps#credits--licenses
+素材作者与《撤离前线》无从属或代言关系。

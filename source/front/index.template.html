@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c1013">
+<title>撤离前线</title>
+<style>/* STYLES */</style>
+</head>
+<body>
+<main id="lobby">
+  <div id="menuWorld" aria-hidden="true"></div><div class="cover"></div>
+  <header class="shell bar">
+    <a class="brand" href="./" aria-label="撤离前线首页"><span class="brand-mark"></span><span>撤离前线<small>EXFIL FRONTLINE</small></span></a>
+    <div class="bar-actions"><button id="controlsOpen" class="plain">操作指南</button><button id="settingsOpen" class="plain">设置</button><button id="collectionOpen" class="plain line">武器收藏 <span id="collectionCount">0 / 6</span></button></div>
+  </header>
+  <section class="hero shell">
+    <div class="hero-content">
+      <p class="eyebrow"><i>行动</i> 六人小队 <span>沿岸封锁区</span></p>
+      <h1>撤离前线<span>EXFIL FRONTLINE</span></h1>
+      <p class="lede">空手进入封锁区，搜集武器和物资。<br>前往望明灯塔，从中层平台撤离。</p>
+      <div class="deploy"><button id="play" class="primary">开始游戏 <span>↗</span></button><button id="roomOpen" class="plain line">邀请好友 <span>＋</span></button></div>
+    </div>
+    <aside id="spot" class="hero-map"><span class="map-icon">⌖</span><div><small>当前行动地图</small><strong id="mapReadout">潮汐码头</strong><span id="mapSub">TIDAL DOCKS</span></div></aside>
+  </section>
+  <section class="operations">
+    <div class="shell console">
+      <section class="unit"><div class="section-heading"><h2>行动地图</h2><span id="mapIndex">01 / 03</span></div><div id="maps" class="choice-row maps"></div></section>
+      <section class="unit"><div class="section-heading"><h2>干员职业</h2><span id="roleReadout">突击</span></div><div id="roles" class="choice-row roles"></div><p id="roleDesc" class="muted"></p></section>
+      <section class="unit squad-unit"><div class="section-heading"><h2>行动小队</h2><span id="teamTotal">6 人</span></div><div id="lobbySquad"></div><p id="lobbyRoom" class="muted"></p></section>
+    </div>
+  </section>
+</main>
+<section id="match" aria-label="战场" hidden>
+  <div id="view" tabindex="-1"></div>
+  <div id="vignette"></div>
+  <div id="damage"></div>
+  <div class="hud hud-top">
+    <div class="match-title"><div><small>撤离目标</small><strong>望明灯塔</strong><span id="hudMap"></span><em> · 中层平台</em></div></div>
+    <div id="compass"><div id="compassTape"></div><i></i><strong>北 000°</strong></div>
+    <div class="map-box"><canvas id="radar" width="154" height="145" aria-label="小地图"></canvas><div><b>◆ 望明灯塔</b><span id="distance"></span></div></div>
+  </div>
+  <div class="hud hud-side"><div class="side-label">小队 <span id="teamLive"></span></div><div id="matchSquad"></div></div>
+  <div id="worldMarker" hidden><b>望明灯塔</b><i></i><span></span></div>
+  <div id="reticle"><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="deployCard" hidden><i></i><strong></strong><span>六人小队 · 空手部署</span></div>
+  <div id="scopeShade" hidden><div class="optic"><span id="opticX"></span><div></div><i></i></div></div>
+  <div id="hit" hidden>×</div>
+  <div id="prompt" hidden><kbd>E</kbd> <span></span></div>
+  <div id="barProgress" hidden><strong></strong><div><i></i></div></div>
+  <div id="toast" aria-live="polite"></div>
+  <div class="hud hud-bottom">
+    <div class="player-hud"><div><strong id="hp">112</strong><span>生命</span></div><div class="hp-track"><i id="hpBar"></i></div><small id="inventory">物资 0 · 急救包 0</small></div>
+    <div class="field-actions">
+      <button id="pause" aria-label="暂停"><kbd>Esc</kbd> 暂停</button><button id="leave" aria-label="返回大厅" hidden>返回</button><button id="interact" disabled><kbd>E</kbd> 交互</button><button id="heal"><kbd>H</kbd> 治疗</button>
+      <button id="scope"><kbd>Q</kbd> 瞄准</button><button id="reload"><kbd>R</kbd> 换弹</button><button id="crouch">蹲伏</button><button id="jump">跳跃</button><button id="fire" class="fire">开火</button>
+    </div>
+    <div class="weapon-hud"><div><b id="ammo">—</b><span id="maxAmmo"></span></div><div id="ammoPips"></div><strong id="weapon">空手</strong><small id="weaponState">寻找随机出现的武器</small></div>
+  </div>
+  <div id="touchMove" role="group" aria-label="移动摇杆" hidden><div id="stickRing"><i id="stickKnob"></i></div></div>
+  <div id="grabTip">点击画面锁定鼠标</div>
+</section>
+<section id="settlement" hidden>
+  <header class="shell bar"><div class="brand"><span class="brand-mark"></span><span>撤离前线<small>EXFIL FRONTLINE</small></span></div><button class="plain line" id="settledBack">返回大厅 ↗</button></header>
+  <div class="shell report">
+    <div class="report-title"><p class="eyebrow"><i></i> 望明灯塔 · 行动结算</p><h1 id="outcome">成功撤离</h1><p id="outcomeDesc" class="muted"></p></div>
+    <div id="shopSection">
+      <div class="market">
+        <aside class="manifest"><div class="section-heading"><h2>带出物资</h2><span id="bagCount"></span></div><div id="manifestList"></div><button id="sell" class="primary compact">出售全部 <span id="sellValue"></span></button></aside>
+        <section class="store"><div class="section-heading"><h2>灯塔商店</h2><span id="balance"></span></div><div id="shopList" class="shop-list"></div></section>
+      </div>
+    </div>
+    <button id="retry" class="primary retry" hidden>返回大厅 <span>↗</span></button>
+  </div>
+</section>
+<dialog id="dialog"><div class="dialog-inner"><button id="closeDialog" class="plain x" aria-label="关闭">×</button><div id="dialogContent"></div></div></dialog>
+<script>/* GAME */</script>
+</body>
+</html>

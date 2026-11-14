@@ -1,0 +1,5 @@
+/index.html
+/room-server.cjs
+/source/node_modules/
+/source/release/
+/source/.env*

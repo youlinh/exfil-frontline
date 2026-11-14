@@ -1,0 +1,17 @@
+{
+  "name": "exfil-frontline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node release/room-server.cjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "three": "0.180.0",
+    "ws": "8.23.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}
