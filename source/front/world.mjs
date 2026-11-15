@@ -27,7 +27,7 @@ const palette={
   roof:matte(0x4a524b), glass:matte(0x405b60), trim:matte(0xa8ac91), stripe:matte(0xaea366),
   rail:matte(0xb2a68f), lamp:unlit(0xfbe6a2), mark:unlit(0xffbd69),
   groundMark:new T.MeshBasicMaterial({color:0xe8a853,transparent:true,opacity:.79,side:T.DoubleSide}),
-  glove:matte(0x232d26),
+  glove:matte(0x8a7758),
   gun:matte(0x282d31), gunGrip:matte(0x15191b), gunSlide:matte(0x61696e), scopeGlass:matte(0x38635f), brass:matte(0xa29e66),
   pine:matte(0x304436), bark:matte(0x514c3a)
 };
@@ -355,6 +355,7 @@ const metalDark=industrial(0x292b2f,.49);
 const metalEdge=industrial(0x555a60,.42);
 const polymer=new T.MeshStandardMaterial({color:0x22262a,roughness:.82,metalness:.06});
 const opticCoat=new T.MeshStandardMaterial({color:0x304950,roughness:.27,metalness:.68});
+const magGripY=id=>id==='p9'?-.26:-.29;
 function gunParts(parent,id) {
   const def=ITEMS[id], form=def?.form;
   if(!form)return {};
@@ -500,7 +501,10 @@ export class WorldView {
     const lamp=new T.DirectionalLight(0xffdcba,3.45);
     lamp.position.set(3,5,-2);
     this.handsScene.add(lamp);
-    this.handsCamera=new T.PerspectiveCamera(54,1,.024,4);
+    const fill=new T.DirectionalLight(0xc3d2e6,1.5);
+    fill.position.set(-2,1.5,3);
+    this.handsScene.add(fill);
+    this.handsCamera=new T.PerspectiveCamera(64,1,.024,4);
     this.model=new T.Group();this.handsScene.add(this.model);
     this.markerVec=new T.Vector3();this.look=new T.Vector3();this.markerForward=new T.Vector3();
     this.soldiersReady=sharedSoldier().then(asset=>{this.soldiers=asset;return asset;});
@@ -640,8 +644,25 @@ export class WorldView {
     this.model.add(this.handRight,this.handLeft);
     for(const [i,hand] of [this.handRight,this.handLeft].entries()) {
       const mirror=i===0?1:-1;
-      const arm=ell(hand,sleeve,mirror*.026,-.097,.178,.082,.086,.27);arm.rotation.x=.34;arm.rotation.y=mirror*.12;
+      const support=i===1&&key&&key!=='blade'&&key!=='p9';
+      const arm=support?ell(hand,sleeve,-.03,-.19,.40,.084,.088,.74):ell(hand,sleeve,mirror*.026,-.097,.178,.082,.086,.27);
+      arm.rotation.x=support?.42:.34;arm.rotation.y=mirror*.12;
       const cuff=bevel(hand,polymer,0,-.033,.094,.146,.106,.124);cuff.rotation.x=.20;
+      if(i===0&&key&&key!=='blade') {
+        ell(hand,palette.glove,.004,-.03,.03,.05,.12,.085);
+        ell(hand,palette.glove,-.042,.026,.054,.09,.035,.04);
+        ell(hand,palette.glove,-.087,.021,.016,.026,.028,.075).rotation.x=-.2;
+        for(let f=0;f<3;f++){
+          const y=-.012-f*.03,z=-.042+f*.0075;
+          ell(hand,palette.glove,-.047,y,z,.085,.026,.034);
+          ell(hand,palette.glove,-.082,y,z+.016,.022,.024,.04);
+          ell(hand,palette.gunSlide,-.047,y+.002,z-.014,.05,.012,.01);
+        }
+        this.finger=new T.Group();this.finger.position.set(.001,.026,-.014);hand.add(this.finger);
+        ell(this.finger,palette.glove,0,-.003,-.042,.026,.026,.09);
+        ell(this.finger,palette.glove,-.046,-.008,-.088,.1,.023,.026);
+        continue;
+      }
       ell(hand,palette.glove,0,-.013,.018,.056,.047,.079);
       bevel(hand,palette.gunGrip,0,.021,.009,.092,.026,.08);
       for(let f=0;f<4;f++){
@@ -649,12 +670,14 @@ export class WorldView {
         const finger=ell(hand,palette.glove,x,-.014,z,.014,.027,.047);
         finger.rotation.x=.3+f*.16;finger.rotation.z=mirror*(f-1.5)*.066;
         ell(hand,palette.gunSlide,x,.007,z+.027,.013,.009,.012);
-        if(i===0&&f===0)this.finger=finger;
       }
       ell(hand,palette.glove,mirror*.062,.002,.019,.033,.028,.056).rotation.z=-mirror*.37;
     }
     this.handRight.position.set(.042,-.096,.014);
-    this.handLeft.position.set(-.014,-.071,key==='m200'?-.41:key==='p9'?-.105:key?-.28:-.06);
+    this.supportZ=key==='m200'?-.45:key==='p9'?.02:ITEMS[key]?.form==='smg'?-.34:key&&key!=='blade'?-.42:key?-.28:-.06;
+    this.supportY=key==='p9'?-.215:-.071;
+    this.handLeft.position.set(-.014,this.supportY,this.supportZ);
+    if(key&&key!=='blade'&&key!=='p9')this.handLeft.rotation.y=-1.05;
     if(!key) {
       this.handRight.position.set(.016,-.109,.17);
       this.handLeft.position.set(-.52,-.12,.16);
@@ -774,19 +797,23 @@ export class WorldView {
     const breath=Math.sin(t*1.72)*.006;
     const reload=player.reload>0?1-player.reload/(weapon?.reload??1):0;
     const reloadLift=player.reload>0?Math.sin(Math.PI*reload):0;
-    const drawAt=player.aim?.003:.31;
+    const drawAt=player.aim?.003:.30;
     const sightHeight=player.weapon==='p9'?-.103:-.170;
-    this.model.position.set(drawAt+walking*.72+this.sway*.07,player.aim?sightHeight+breath*.32:-.265+walking*.56+breath-reloadLift*.137-this.equip*.31-this.sway*.07,-.49+this.recoil*.115);
-    this.model.rotation.set(-reloadLift*.30+this.recoil*.17,player.aim?0:-.118+reloadLift*.33,player.aim?0:-.078-reloadLift*.52+this.sway*.23);
+    this.model.position.set(drawAt+walking*.72+this.sway*.07,player.aim?sightHeight+breath*.32:-.135+walking*.56+breath+reloadLift*.04-this.equip*.31-this.sway*.07,(player.aim?-.49:-.72)+this.recoil*.115);
+    this.model.rotation.set(reloadLift*.12+this.recoil*.17,player.aim?0:.16+reloadLift*.2,player.aim?0:-.2-reloadLift*.45+this.sway*.23);
     if(this.parts.magazine) {
       const pull=Math.max(0,Math.sin(Math.PI*(reload-.13)/.66));
       const down=player.reload>0&&reload>.13&&reload<.79?pull:0;
       this.parts.magazine.position.set(-down*.036,-.081-down*.24,this.parts.magHome+down*.068);
       this.parts.magazine.rotation.x=down*.33;
-      this.handLeft.position.y=-.071-down*.22;
-      this.handLeft.position.z=(player.weapon==='m200'?-.41:player.weapon==='p9'?-.105:-.28)+down*.13;
-      this.parts.trigger.rotation.x=.24-this.recoil*.63;
-      this.finger.rotation.x=.32+this.recoil*.50;
+      const reach=player.reload>0?Math.min(1,reload/.13,(1-reload)/.12):0;
+      const grab=reach*reach*(3-2*reach);
+      this.handLeft.position.y=this.supportY+grab*(magGripY(player.weapon)-this.supportY)-down*.24;
+      this.handLeft.position.z=this.supportZ+grab*(this.parts.magHome+.02-this.supportZ)+down*.068;
+      this.handLeft.position.x=-.014-down*.036;
+      const squeeze=Math.min(1,this.recoil);
+      this.parts.trigger.rotation.x=.24-squeeze*.75;
+      this.finger.position.z=-.014+squeeze*.012;this.finger.rotation.y=squeeze*.25;
       const rack=player.reload>0?Math.max(0,1-Math.abs(reload-.88)*11):0;
       this.parts.action.position.z=Math.max(this.recoil*.052,rack*.075);
     }
